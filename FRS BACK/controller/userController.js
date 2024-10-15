@@ -1,5 +1,6 @@
 const db = require('../database');
 const bcrypt = require('bcrypt');
+const jwtToken = require('../middleware/jwttoken');
 
 const checkUsernameRepetition = async (username) => {
     const query = "SELECT * FROM userInfo WHERE username = ?";
@@ -83,23 +84,51 @@ const deleteUser = (req, res) => {
 
 const userLogin = (req,res) => {
     const { email, password } = req.body;
-
     const emailPresent = checkEmailRepetition(email);
+
     if (emailPresent) {
-        
-        const query = 'SELECT password FROM userInfo where email = ?';
+        const query = 'SELECT password,userId FROM userInfo where email = ?';
         db.query(query, [email])
             .then(([result]) => {
                 const dbPassword = result[0].password;
                 const isMatched = bcrypt.compareSync(password, dbPassword);
-                
+                if (isMatched) {
+                    res.status(200).json({success:true,userId:result[0].userId, token: jwtToken(email, dbPassword) });
+                } else {
+                    res.status(401).json({ success: false, message: 'Email or password doesn\'nt match!' });
+                }
         })
     }
-    res.status(200).send(`${email}, ${password}`);
 }
+
+const getUser = (req, res) => {
+    if (req.user) {
+        const query = 'SELECT * FROM userInfo WHERE userId = ?';
+    
+        db.query(query, [req.params.id])
+            .then(([row]) => {
+                if (row.length > 0) {
+                    res.status(200).json({
+                        success:true,
+                        userId: row[0].userId,
+                        username: row[0].username,
+                        email: row[0].email,
+                        role: row[0].role
+                    });
+                } else {
+                    res.status(422).json({ success: false, message: 'Couldn\'nt find the user data!' });
+                }
+            }).catch(err => {
+                console.log('Error getting the user data: ', err);
+                res.status(500).json({ success: false, message: 'Couldn\'t fetch the user!' });
+        })
+    }
+}
+
 module.exports = {
     getUsers,
     createUsers,
     deleteUser,
-    userLogin
+    userLogin,
+    getUser
 };
