@@ -6,6 +6,7 @@ import ReviewCard from "../components/ReviewCard";
 import Footer from "../components/Footer";
 
 export default function Home() {
+
   const chefContents = Contents.ChefContents.map((value, index) => {
     return (
       <div key={index} className="basis-1/3 sm:basis-1/6 p-2 lg:p-4">

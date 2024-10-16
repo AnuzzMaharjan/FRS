@@ -27,7 +27,8 @@ export default function PopupModal({ open, handleClose, task,onFormSubmit }) {
     const data = {
       username: task === 'Signup' ? userName : "",
       email,
-      password
+      password,
+      task
     };
     onFormSubmit(data);
   }
@@ -48,7 +49,6 @@ export default function PopupModal({ open, handleClose, task,onFormSubmit }) {
             <form onSubmit={handleFormDataSubmit}>
               <input
                 type="text"
-                required
                 className={`${task === 'Signup'?'':'hidden'} border w-full p-2 mt-3`}
                 placeholder="Username"
                 onChange={(e)=> setUserName(e.target.value)}

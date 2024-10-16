@@ -90,12 +90,16 @@ const userLogin = (req,res) => {
         const query = 'SELECT password,userId FROM userInfo where email = ?';
         db.query(query, [email])
             .then(([result]) => {
-                const dbPassword = result[0].password;
-                const isMatched = bcrypt.compareSync(password, dbPassword);
-                if (isMatched) {
-                    res.status(200).json({success:true,userId:result[0].userId, token: jwtToken(email, dbPassword) });
+                const dbPassword = result.length > 0 && result[0].password;
+                if (dbPassword) {
+                    const isMatched = bcrypt.compareSync(password, dbPassword);
+                    if (isMatched) {
+                        res.status(200).json({success:true,userId:result[0].userId, token: jwtToken(email, dbPassword) });
+                    } else {
+                        res.status(401).json({ success: false, message: 'Email or password doesn\'nt match!' });
+                    }
                 } else {
-                    res.status(401).json({ success: false, message: 'Email or password doesn\'nt match!' });
+                    res.status(404).json({ success: false, message: 'User not found! Please make sure you are registered!!' });
                 }
         })
     }

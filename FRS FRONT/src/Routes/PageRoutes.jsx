@@ -15,10 +15,12 @@ export default function PageRoutes() {
       <Route path="/" element={<Header />}>
         <Route index element={<Home />} />
         <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/services" element={<Services />}>
+
+        <Route path="services" element={<Services />}>
           <Route index element={ <Catering />} />
-          <Route path="/services/rental" element={ <Rental />} />
+          <Route path="rental" element={ <Rental />} />
         </Route>
+
         <Route path="/test" element={<Test />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
       </Route>
