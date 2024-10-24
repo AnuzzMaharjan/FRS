@@ -1,6 +1,6 @@
 const db = require('../database');
 const bcrypt = require('bcrypt');
-const jwtToken = require('../middleware/jwttoken');
+const {jwtTokenForAuthentication} = require('../middleware/jwttoken');
 
 const checkUsernameRepetition = async (username) => {
     const query = "SELECT * FROM userInfo WHERE username = ?";
@@ -94,7 +94,7 @@ const userLogin = (req,res) => {
                 if (dbPassword) {
                     const isMatched = bcrypt.compareSync(password, dbPassword);
                     if (isMatched) {
-                        res.status(200).json({success:true,userId:result[0].userId, token: jwtToken(email, dbPassword) });
+                        res.status(200).json({success:true,userId:result[0].userId, token: jwtTokenForAuthentication(email, dbPassword) });
                     } else {
                         res.status(401).json({ success: false, message: 'Email or password doesn\'nt match!' });
                     }
@@ -129,10 +129,15 @@ const getUser = (req, res) => {
     }
 }
 
+const test = (req, res) => {
+    res.status(200).json({ message: 'got otp' });
+}
+
 module.exports = {
     getUsers,
     createUsers,
     deleteUser,
     userLogin,
-    getUser
+    getUser,
+    test
 };

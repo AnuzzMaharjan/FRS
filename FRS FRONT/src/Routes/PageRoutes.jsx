@@ -8,6 +8,7 @@ import NotFound from "../pages/NotFound";
 import Services from "../pages/Services";
 import Catering from "../components/Catering";
 import Rental from "../components/Rental";
+import Contact from "../pages/Contact";
 
 export default function PageRoutes() {
   return (
@@ -16,13 +17,14 @@ export default function PageRoutes() {
         <Route index element={<Home />} />
         <Route path="/aboutus" element={<AboutUs />} />
 
-        <Route path="services" element={<Services />}>
+        <Route path="services/" element={<Services />}>
           <Route index element={ <Catering />} />
           <Route path="rental" element={ <Rental />} />
         </Route>
 
         <Route path="/test" element={<Test />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/contact-us" element={<Contact />} />
       </Route>
       <Route path="*" element={<NotFound />} /> {/* for url that is not mentioned in the navbar */ }
     </Routes>

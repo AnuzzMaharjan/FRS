@@ -1,56 +1,34 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
+import { createUser, getOtp } from "../config/createUser";
 
 export default function Test() {
+    const [otpResponse, setOtpResponse] = useState({});
     const [testData, setTestData] = useState([]);
 
-    const handleLogin = async() => {
-        try {
-            const response = await axios.post('http://localhost:4000/login', {
-                email:"user1@dummy.com",
-                password:"123456789"
-            },
-                {
-                    headers: {
-                    "Content-Type":"application/json"
-                }
-            }
-            )
-            localStorage.setItem('token', response.data.token);
-            getUserData(response.data.userId);
-        } catch (err) {
-            console.log('Error', err);
-            setTestData(err.response.data);
+    const handleGetOtp = async (email)=>{
+        const response = await getOtp(email);
+        if (response.data.success) {
+            setOtpResponse(response.data);
         }
     }
 
-    const getUserData = async (userId) => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await axios.get(`http://localhost:4000/user/${userId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            setTestData(response.data);
-        } catch (err) {
-            console.log('Error getting user data!', err);
-            setTestData(err.response.data);
+    const handleVerifyOtp = async (email) => {
+        if (otpResponse.success) {
+            const response = createUser(email, otpResponse.otp, otpResponse.token,'asdf','Anuj Maharjan');
+            console.log(response);
         }
     }
-
+    
     useEffect(() => {
-        handleLogin();
-    },[])
+        console.log(otpResponse);
+        handleVerifyOtp("maharjananuzz6@gmail.com")
+    }, [otpResponse]);
 
     return (
         <>
-            {console.log(testData,)}
-            {testData.success ?
-                <p>{JSON.stringify(testData)}</p> : <p>{testData.message}</p>}
+            <button onClick={()=>handleGetOtp("maharjananuzz6@gmail.com")}>click</button>
             
         </>
     );

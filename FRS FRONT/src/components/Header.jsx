@@ -31,7 +31,7 @@ export default function Header() {
                 </li>
                 <NavLink to='/services' className={({isActive})=>isActive?'text-red-600':''}><li className="px-5">Services</li></NavLink>
                 <li className="border-x px-5">Blog</li>
-                <li className="px-5">Contact Us</li>
+                <NavLink to='/contact-us' className={({isActive})=>isActive?'text-red-600':''}><li className="px-5">Contact Us</li></NavLink>
               </ul>
             </div>
           </nav>
