@@ -13,23 +13,52 @@ export default function Profile() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [task, setTask] = useState("");
-  const [formData, setFormData] = useState({});
+  const [email, setEmail] = useState("");
   const [userData, setUserData] = useState({});
   const [otpResponse, setOtpResponse] = useState({});
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const handleFormSubmission = async (data) => {
-    setFormData(data);
+    if (data.task === "Login") {
+      userLogin(data.email, data.password);
+    }
+    if (data.task === "Signup") {
+      if (otpResponse.success) {
+        try {
+          const response = await createUser(
+            data.email,
+            data.otp,
+            otpResponse.token,
+            data.password,
+            data.username
+          );
+          
+          if (response.success) {
+            alert(response.message);
+            userLogin(data.email, data.password);
+          } else {
+            alert(response.message);
+          }
+        } catch (err) {
+          throw new Error("Signup Error: ", err);
+        }
+      } else {
+        throw new Error(otpResponse.message);
+      }
+    }
   };
 
-  const handleModalOpen = (task) => {
-    setTask(task);
-    handleOpen();
-  };
-
+  const userLogin = async(email,password) => {
+    try {
+      const response = await handleLogin(email, password);
+      if (!response.success) {
+        throw new Error("Login Failed");
+      }
+      setIsLoggedIn(true);
+    } catch (err) {
+      throw new Error("Login Error: ", err);
+    }
+  }
+  
   const checkLogin = () => {
     if (isCookieExpired("auth_token").expired || !getCookie("auth_token")) {
       setIsLoggedIn(false);
@@ -38,49 +67,32 @@ export default function Profile() {
     }
   };
 
-  // const handleGetOtp = async (email) => {
-  //   const response = await getOtp(email);
-  //   if (response.data.success) {
-  //     setOtpResponse(response.data);
-  //   }
-  // };
+  const handleGetOtp = async (emailData) => {
+    console.log(email, "emailstate");
+    const response = await getOtp(emailData);
+    if (response.data.success) {
+      setOtpResponse(response.data);
+    } else {
+      console.log(response.data);
+    }
+  };
 
   // const handleVerifyOtp = async (email) => {
+  //   console.log(email, "verify");
   //   if (otpResponse.success) {
-  //     const response = createUser(
+  //     const response = await createUser(
   //       email,
-  //       otpResponse.otp,
+  //       formData.otp,
   //       otpResponse.token,
   //       formData.password,
   //       formData.username
   //     );
+
   //     console.log(response);
+  //   } else {
+  //     console.log(otpResponse);
   //   }
   // };
-
-  // useEffect(() => {
-  //   console.log(otpResponse);
-  //   handleVerifyOtp("maharjananuzz6@gmail.com");
-  // }, [otpResponse]);
-
-  useEffect(() => {
-    const login = async () => {
-      if (formData.task === "Login") {
-        try {
-          const response = await handleLogin(formData.email, formData.password);
-          if (!response.success) {
-            throw new Error("Login Failed");
-          }
-          setIsLoggedIn(true);
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setFormData({});
-        }
-      }
-    };
-    login();
-  }, [formData.task]);
 
   useEffect(() => {
     checkLogin();
@@ -99,6 +111,12 @@ export default function Profile() {
     };
     fetchUserData();
   }, [isLoggedIn]);
+
+  const getEmailData = (data) => {
+    console.log(data, "emaildata");
+    setEmail(data);
+    if (data && data != "") handleGetOtp(data);
+  };
 
   return (
     <>
@@ -138,10 +156,21 @@ export default function Profile() {
                   task={task}
                   onFormSubmit={handleFormSubmission}
                 /> */}
-              <LoginForm open={loginOpen} handleClose={()=>setLoginOpen(false)} task="Login" onFormSubmit={handleFormSubmission} />
-  
-                <SignupForm open={signupOpen} handleClose={()=>setSignupOpen(false)} task="Signup" onFormSubmit={handleFormSubmission} />
-  
+                <LoginForm
+                  open={loginOpen}
+                  handleClose={() => setLoginOpen(false)}
+                  task="Login"
+                  onFormSubmit={handleFormSubmission}
+                />
+
+                <SignupForm
+                  open={signupOpen}
+                  onReqOtp={setEmail}
+                  handleClose={() => setSignupOpen(false)}
+                  task="Signup"
+                  onFormSubmit={handleFormSubmission}
+                  sendEmailDatatoParent={getEmailData}
+                />
               </div>
             ) : (
               <>
@@ -164,7 +193,7 @@ export default function Profile() {
                 <button
                   className="bg-blue-600 py-3 px-10 rounded-md ml-5 mt-auto mb-8 text-white text-xl font-semibold transition hover:scale-105"
                   onClick={() => {
-                    handleLogout(); 
+                    handleLogout();
                     setIsLoggedIn(false);
                   }}
                 >

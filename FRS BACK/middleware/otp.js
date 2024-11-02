@@ -6,12 +6,16 @@ const { jwtTokenForRegister } = require('./jwttoken');
 const generateOTP = (req, res, next) => {
     const otp = crypto.randomInt(100000, 999999);
     const { email } = req.body;
-    console.log(email);
-        // sendMail(req.body.email, 'OTP for login', `Ignore if not expecting this mail. your login otp is: ---------- ${otp} ---------- . Do not reply!`);
-
-    const token = jwtTokenForRegister(otp, email);
-
-        res.status(200).json({ success: true, message: 'Otp Generated',otp:otp,token:token });
+    if (email) {
+        console.log(email);
+            sendMail(req.body.email, 'OTP for login', `Ignore if not expecting this mail. your login otp is: ---------- ${otp} ---------- . Do not reply!`);
+    
+        const token = jwtTokenForRegister(otp, email);
+    
+            res.status(200).json({ success: true, message: 'Otp Generated',token:token });
+    } else {
+        res.status(400).json({ success: false, message: 'No email found' });
+    }
 
 }
 

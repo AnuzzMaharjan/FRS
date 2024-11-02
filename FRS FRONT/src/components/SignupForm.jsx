@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -16,11 +16,22 @@ const style = {
   p: 4,
 };
 
-export default function SignupForm({ open, handleClose, task, onFormSubmit }) {
+export default function SignupForm({
+  open,
+  handleClose,
+  task,
+  onReqOtp,
+  onFormSubmit,
+  sendEmailDatatoParent,
+}) {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
+
+  // useEffect(() => {
+  //   console.log(otp);
+  // }, [otp]);
 
   const handleSignupForm = (e) => {
     e.preventDefault();
@@ -29,11 +40,14 @@ export default function SignupForm({ open, handleClose, task, onFormSubmit }) {
       username: userName,
       email,
       password,
-        task,
-      otp
+      task,
+      otp,
     };
-
     onFormSubmit(data);
+  };
+
+  const sendEmailData = (email) => {
+    sendEmailDatatoParent(email);
   };
 
   return (
@@ -75,12 +89,18 @@ export default function SignupForm({ open, handleClose, task, onFormSubmit }) {
               />
               <div>
                 <input
-                  type="number"
+                  type="text"
                   className="border w-1/2 p-2 mt-3"
                   placeholder="OTP"
                   onChange={(e) => setOtp(e.target.value)}
                 />
-                <button className="text-blue-600 w-1/2 underline">Request Otp</button>
+                <button
+                  type="button"
+                  className="text-blue-600 w-1/2 underline"
+                  onClick={() => sendEmailData(email)}
+                >
+                  Request Otp
+                </button>
               </div>
               <button
                 className="mt-4 py-2 w-full px-10 text-xl font-sans font-semibold text-white rounded-md bg-red-600"

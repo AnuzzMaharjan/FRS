@@ -19,7 +19,7 @@ export const createUser = async(email,otp,token,password,username) => {
             password,
             otp: Number(otp),
             token
-        },{ withCredentials: true });
+        }, { withCredentials: true });
         return response.data;
     }
     catch (error) {

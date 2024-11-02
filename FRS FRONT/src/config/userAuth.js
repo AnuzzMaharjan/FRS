@@ -1,5 +1,4 @@
 import axios from "axios";
-import { json } from "react-router-dom";
 import { setCookie,getCookie,deleteCookie } from "../config/cookie";
 
 export const handleLogin =async(email, password)=>{

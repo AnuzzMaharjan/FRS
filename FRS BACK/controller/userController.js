@@ -53,9 +53,9 @@ const createUsers =async (req, res) => {
         db.query(query, [username, email, hashedPassword, 'user'])
         .then(([result]) => {
                 if (result.affectedRows > 0) {
-                    res.status(200).json({ message: `User created successfully!` });
+                    res.status(200).json({success:true, message: `User created successfully!` });
                 } else {
-                    res.status(404).json({ message: 'Failed to create the user' });
+                    res.status(404).json({success:false, message: 'Failed to create the user' });
                 }
             })
             .catch(err => {
