@@ -87,14 +87,14 @@ const userLogin = (req,res) => {
     const emailPresent = checkEmailRepetition(email);
 
     if (emailPresent) {
-        const query = 'SELECT password,userId FROM userInfo where email = ?';
+        const query = 'SELECT password,userId,role FROM userInfo where email = ?';
         db.query(query, [email])
             .then(([result]) => {
                 const dbPassword = result.length > 0 && result[0].password;
                 if (dbPassword) {
                     const isMatched = bcrypt.compareSync(password, dbPassword);
                     if (isMatched) {
-                        res.status(200).json({success:true,userId:result[0].userId, token: jwtTokenForAuthentication(email, dbPassword) });
+                        res.status(200).json({success:true,userId:result[0].userId,role:result[0].role, token: jwtTokenForAuthentication(email, dbPassword) });
                     } else {
                         res.status(401).json({ success: false, message: 'Email or password doesn\'nt match!' });
                     }

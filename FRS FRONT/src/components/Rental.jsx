@@ -1,8 +1,81 @@
+import { useEffect, useState } from "react";
+import { getRentalItemsList } from "../config/adminFunctions";
 
 export default function Rental() {
+    const [firstItemBlock, setFirstItemBlock] = useState([]);
+    const [secondItemBlock, setSecondItemBlock] = useState([]);
+
+    const getItemsList = async () => {
+        const result = await getRentalItemsList();
+        
+        if (result.length > 20) {
+            setFirstItemBlock(result.slice(0,5));
+            setSecondItemBlock(result.slice(5));
+        } else {
+            setFirstItemBlock(result);
+        }
+    }
+
+    useEffect(() => {
+        getItemsList();
+    }, [])
+
+    const firstMappedData = firstItemBlock?.map((value, index) => {
+        return (
+            <tr key={index}>
+                <td className="border border-slate-400">{ index }</td>
+                <td className="border border-slate-400">{ value.itemName}</td>
+                <td className="border border-slate-400">{ value.itemPrice}</td>
+                <td className="border border-slate-400 max-w-16"><input type="number" className="w-full text-center focus:outline-none" /></td>
+                <td className="border border-slate-400 max-w-16"><input type="number" className="w-full text-center focus:outline-none" /></td>
+            </tr>
+        )
+    }) || 'No Items found!!';
+    const secondMappedData = secondItemBlock?.map((value, index) => {
+        return (
+            <tr key={index}>
+                <td className="border border-slate-400">{ index }</td>
+                <td className="border border-slate-400">{ value.itemName}</td>
+                <td className="border border-slate-400">{ value.itemPrice}</td>
+                <td className="border border-slate-400 max-w-16"><input type="number" className="w-full text-center focus:outline-none" /></td>
+                <td className="border border-slate-400 max-w-16"><input type="number" className="w-full text-center focus:outline-none" /></td>
+            </tr>
+        )
+    }) || '';
+
     return (
         <>
-            <h1>rental</h1>
+            <div className="flex flex-wrap gap-[2%]">
+                <table className="basis-[49%] text-center border-collapse">
+                    <thead>
+                    <tr>
+                        <th className="border-b border-slate-400">S.N.</th>
+                        <th className="border-b border-slate-400">Item Name</th>
+                        <th className="border-b border-slate-400">Item Rate</th>
+                        <th className="border-b border-slate-400">Units</th>
+                        <th className="border-b border-slate-400">Days</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {firstMappedData}
+                    </tbody>
+                </table>
+
+                <table className="basis-[49%] border-collapse">
+                <thead>
+                    <tr>
+                        <th className="border-b border-slate-400">S.N.</th>
+                        <th className="border-b border-slate-400">Item Name</th>
+                        <th className="border-b border-slate-400">Item Rate</th>
+                        <th className="border-b border-slate-400">Units</th>
+                        <th className="border-b border-slate-400">Days</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {secondMappedData}
+                    </tbody>
+                </table>
+            </div>
         </>  
     );
 }

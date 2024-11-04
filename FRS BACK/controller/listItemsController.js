@@ -1,7 +1,7 @@
 const db = require('../database');
 
 const checkItemRepetitionId = async (id) => {
-    const query = 'SELECT * FROM itemLists WHERE itemId = ?';
+    const query = 'SELECT * FROM itemsList WHERE itemId = ?';
     try {
         const [result] = await db.query(query, [Number(id)]);
         return result.length > 0 ? true : false;
@@ -10,7 +10,7 @@ const checkItemRepetitionId = async (id) => {
     }
 }
 const checkItemRepetitionName = async (name) => {
-    const query = 'SELECT * FROM itemLists WHERE itemName = ?';
+    const query = 'SELECT * FROM itemsList WHERE itemName = ?';
     try {
         const [result] = await db.query(query, [name]);
         return result.length > 0 ? true : false;
@@ -20,7 +20,7 @@ const checkItemRepetitionName = async (name) => {
 }
 
 const getTotalItems = (req, res) => {
-    const query = 'SELECT * FROM itemLists';
+    const query = 'SELECT * FROM itemsList';
     db.query(query)
         .then(([rows]) => {
             res.json(rows);
@@ -33,7 +33,7 @@ const getTotalItems = (req, res) => {
 
 const getSingleItem = (req, res) => {
     const itemId = Number(req.params.id);
-    const query = 'SELECT * FROM itemLists WHERE id = ?';
+    const query = 'SELECT * FROM itemsList WHERE id = ?';
 
     db.query(query, [itemId])
         .then(([row]) => {
@@ -51,13 +51,12 @@ const getSingleItem = (req, res) => {
 
 const createItemEntry = async (req, res) => {
     const { itemName, itemPrice, stock } = req.body;
-    console.log(itemName, itemPrice, stock);
 
     if (await checkItemRepetitionName(itemName)) {
         return res.status(409).send('Item already exists!');
     }
 
-    const query = "INSERT INTO itemLists(itemName,itemPrice,stock) values(?,?,?)";
+    const query = "INSERT INTO itemsList(itemName,itemPrice,stock) values(?,?,?)";
     db.execute(query, [itemName, itemPrice, stock])
         .then(([result]) => {
             if (result.affectedRows > 0) {
@@ -77,7 +76,7 @@ const deleteItemEntry = async (req, res) => {
     const itemPresent = await checkItemRepetitionId(itemId);
 
     if (itemPresent) {
-        const query = "DELETE FROM itemLists WHERE itemId = ?";
+        const query = "DELETE FROM itemsList WHERE itemId = ?";
         db.execute(query, [itemId])
             .then(([result]) => {
                 if (result.affectedRows > 0) {

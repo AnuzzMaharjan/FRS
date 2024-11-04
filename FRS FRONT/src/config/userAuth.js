@@ -15,10 +15,16 @@ export const handleLogin =async(email, password)=>{
             },
           }
         );
-        if (response.data.success) {
-            setCookie('auth_token', response.data.token, 3);
-            setCookie('userId', response.data.userId,3);
-            return {success:true,message:'Login success!'};
+      if (response.data.success) {
+        if (response.data.role === "admin") {
+          setCookie('auth_token', response.data.token, 1);
+          setCookie('userId', response.data.userId, 1);
+          return {success:true,message:'Login success!'};
+        } else {
+          setCookie('auth_token', response.data.token, 3);
+          setCookie('userId', response.data.userId,3);
+          return {success:true,message:'Login success!'};
+        }
         } else {
             return { success: false,message:response.data.message};
         }

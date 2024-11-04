@@ -1,35 +1,35 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { createUser, getOtp } from "../config/createUser";
+import { getRentalItemsList } from "../config/adminFunctions";
 
 export default function Test() {
-    const [otpResponse, setOtpResponse] = useState({});
-    const [testData, setTestData] = useState([]);
-
-    const handleGetOtp = async (email)=>{
-        const response = await getOtp(email);
-        if (response.data.success) {
-            setOtpResponse(response.data);
-        }
-    }
-
-    const handleVerifyOtp = async (email) => {
-        if (otpResponse.success) {
-            const response = createUser(email, otpResponse.otp, otpResponse.token,'asdf','Anuj Maharjan');
-            console.log(response);
-        }
-    }
+    const [items, setItems] = useState();
     
-    useEffect(() => {
-        console.log(otpResponse);
-        handleVerifyOtp("maharjananuzz6@gmail.com")
-    }, [otpResponse]);
+    async function getList() {
+        const result = await getRentalItemsList();
+        
+        const mappedData = result.map((value, index) => {
+            return (<tr key={index}>
+                <td>{value.itemName}</td>
+                <td>{value.itemPrice}</td>
+                <td>{value.stock}</td>
+            </tr>
+            )
+        });
+
+        setItems(mappedData);
+    }
+
 
     return (
         <>
-            <button onClick={()=>handleGetOtp("maharjananuzz6@gmail.com")}>click</button>
-            
+            <button onClick={getList}>click</button>
+            <table>
+                <tbody>
+                { items}
+                </tbody>
+            </table>
         </>
     );
 }
