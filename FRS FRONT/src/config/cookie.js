@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import React from 'react';
 
 export function setCookie(name, value, days) {
     Cookies.set(name, value, { expires: days });

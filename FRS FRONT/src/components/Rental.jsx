@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { getRentalItemsList } from "../config/adminFunctions";
+import { Link, Outlet } from "react-router-dom";
 
 export default function Rental() {
     const [firstItemBlock, setFirstItemBlock] = useState([]);
     const [secondItemBlock, setSecondItemBlock] = useState([]);
+    const [privacyPolicy, setPrivacyPolicy] = useState(false);
 
     const getItemsList = async () => {
         const result = await getRentalItemsList();
@@ -18,12 +20,13 @@ export default function Rental() {
 
     useEffect(() => {
         getItemsList();
+        setPrivacyPolicy(false);
     }, [])
 
     const firstMappedData = firstItemBlock?.map((value, index) => {
         return (
             <tr key={index}>
-                <td className="border border-slate-400">{ index }</td>
+                <td className="border border-slate-400">{ index+1 }</td>
                 <td className="border border-slate-400">{ value.itemName}</td>
                 <td className="border border-slate-400">{ value.itemPrice}</td>
                 <td className="border border-slate-400 max-w-16"><input type="number" className="w-full text-center focus:outline-none" /></td>
@@ -75,6 +78,10 @@ export default function Rental() {
                         {secondMappedData}
                     </tbody>
                 </table>
+            </div>
+            <div>
+                <input type="radio" onChange={(e) => setPrivacyPolicy(true)} />
+                I have read all the <Link to="/terms&conditions">terms & conditions</Link>
             </div>
         </>  
     );

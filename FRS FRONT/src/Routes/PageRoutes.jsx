@@ -13,6 +13,7 @@ import Dashboard from "../admin/Dashboard";
 import AdminLogin from "../admin/AdminLogin";
 import RentalLists from "../admin/components/RentalLists";
 import CateringLists from "../admin/components/CateringLists";
+import TermsConditions from "../pages/TermsConditions";
 
 export default function PageRoutes() {
   return (
@@ -22,23 +23,25 @@ export default function PageRoutes() {
         <Route path="/aboutus" element={<AboutUs />} />
 
         <Route path="services/" element={<Services />}>
-          <Route index element={ <Catering />} />
-          <Route path="rental" element={ <Rental />} />
+          <Route index element={<Catering />} />
+          <Route path="rental" element={<Rental />} />
         </Route>
 
-        <Route path="/test" element={<Test />}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/terms&conditions" element={<TermsConditions />} />
+
+        <Route path="/test" element={<Test />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/contact-us" element={<Contact />} />
       </Route>
-      
       {/* admin routes */}
       <Route path="admin/" element={<AdminLogin />} />
-      <Route path="admin/dashboard" element={<Dashboard />} >
+      <Route path="admin/dashboard" element={<Dashboard />}>
         <Route path="rental-lists" element={<RentalLists />} />
         <Route path="catering-lists" element={<CateringLists />} />
       </Route>
       
-      <Route path="*" element={<NotFound />} /> {/* for url that is not mentioned in the navbar */ }
+      <Route path="*" element={<NotFound />} />
+      {/* for url that is not mentioned in the navbar */}
     </Routes>
   );
 }

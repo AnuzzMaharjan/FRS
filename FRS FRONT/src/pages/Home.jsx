@@ -59,7 +59,6 @@ export default function Home() {
 
   return (
     <>
-      <Header />
       <Banner />
       <div className="container flex justify-center mx-auto pt-7 md:pt-28">
         <div className="grid grid-cols-3 gap-4 md:gap-16 mx-3 sm:mx-6 md:mx-8 lg:mx-12"  >
@@ -71,7 +70,6 @@ export default function Home() {
         </div>
       </div>
       {Articles}
-      <Footer />
     </>
   );
 }
