@@ -15,9 +15,11 @@ app.use(express.json());
 
 const users = require('./routes/userInfo');
 const items = require('./routes/listItems');
+const caterinPkg = require('./routes/cateringList');
 
 app.use('/', users);
 app.use('/', items);
+app.use('/', caterinPkg);
 
 app.listen(port, () => {
     console.log(`Server listening on ${port}`);
