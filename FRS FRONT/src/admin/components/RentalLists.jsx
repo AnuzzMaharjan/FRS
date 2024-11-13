@@ -8,6 +8,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getCookie } from '../../config/cookie';
 
 export default function RentalLists() {
   const [formActive, setFormActive] = useState(false);
@@ -17,7 +18,7 @@ export default function RentalLists() {
   const [itemStock, setItemStock] = useState("");
 
   const deleteItem = async (id) => {
-    const result = await deleteRentalItem(id);
+    const result = await deleteRentalItem(id,getCookie('auth_token'));
     toast(result.message);
     getList();
   };

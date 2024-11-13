@@ -14,9 +14,13 @@ export const getRentalItemsList = async () => {
     }
 }
 
-export const deleteRentalItem = async (id) => {
+export const deleteRentalItem = async (id,token) => {
     try {
-        const response = await axios.delete(`http://localhost:4000/item/${id}`);
+        const response = await axios.delete(`http://localhost:4000/item/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
 
         if (response.status === 200) {
             return response.data;

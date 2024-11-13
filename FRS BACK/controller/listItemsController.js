@@ -49,7 +49,7 @@ const getSingleItem = (req, res) => {
     })
 }
 
-const createItemEntry = async (req, res) => {
+const createItemEntry = async (req, res) => { 
     const { itemName, itemPrice, stock } = req.body;
 
     if (await checkItemRepetitionName(itemName)) {

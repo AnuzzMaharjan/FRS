@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const jwtTokenForAuthentication = (email,pass) => {
-    const token = jwt.sign({ userEmail: email, password: pass, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '72h' });
+const jwtTokenForAuthentication = (email,role) => {
+    const token = jwt.sign({ userEmail: email, role: role }, process.env.JWT_SECRET, { expiresIn: '72h' });
     return token;
 }
 
@@ -10,4 +10,17 @@ const jwtTokenForRegister = (otp, email) => {
     return token
 }
 
-module.exports = {jwtTokenForAuthentication,jwtTokenForRegister};
+const verifyToken = (token)=>{
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decodedToken.exp < currentTime) {
+            return { valid: false, message: "Token Expired" };
+        }
+        return { valid: true, decodedToken };
+    } catch (err) {
+        return { valid: false, message: err.message };
+    }
+}
+
+module.exports = {jwtTokenForAuthentication,jwtTokenForRegister,verifyToken};
