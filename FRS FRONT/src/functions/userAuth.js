@@ -1,10 +1,10 @@
 import axios from "axios";
-import { setCookie,getCookie,deleteCookie } from "../config/cookie";
+import { setCookie, getCookie, deleteCookie } from "./cookie";
 
-export const handleLogin =async(email, password)=>{
+export const handleLogin = async (email, password) => {
     try {
         const response = await axios.post(
-          "http://localhost:4000/login",
+          `http://localhost:4000/login`,
           {
               email,
               password
@@ -14,7 +14,8 @@ export const handleLogin =async(email, password)=>{
               "Content-Type": "application/json",
             },
           }
-        );
+      );
+      console.log(response);
       if (response.data.success) {
         if (response.data.role === "admin") {
           setCookie('auth_token', response.data.token, 1);
@@ -29,7 +30,7 @@ export const handleLogin =async(email, password)=>{
             return { success: false,message:response.data.message};
         }
       } catch (err) {
-        return { success: false, message: `${response.data.message} : ${err}` };
+        return { success: false, message: `Error : ${err}` };
       }
 }
 
@@ -43,7 +44,7 @@ export const getUserData=async()=> {
     const auth_token = getCookie("auth_token");
     const userId = getCookie("userId");
     try {
-      const response = await axios.get(`http://localhost:4000/user/${userId}`, {
+      const response = await axios.get(`${process.env.apiUri}/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${auth_token}`,
         },

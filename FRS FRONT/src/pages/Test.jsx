@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { getRentalItemsList } from "../config/adminFunctions";
+import { getRentalItemsList } from "../functions/adminFunctions";
 
 export default function Test() {
     const [items, setItems] = useState();

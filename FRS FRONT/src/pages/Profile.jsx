@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import chef1 from "../assets/images/chef1.jpeg";
-import { getUserData, handleLogin, handleLogout } from "../config/userAuth";
-import { getCookie, isCookieExpired } from "../config/cookie";
+import { getUserData, handleLogin, handleLogout } from "../functions/userAuth";
+import { getCookie, isCookieExpired } from "../functions/cookie";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import LoginForm from "../components/LoginForm";
 import SignupForm from "../components/signupForm";
-import { createUser, getOtp } from "../config/createUser";
+import { createUser, getOtp } from "../functions/createUser";
 
 export default function Profile() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

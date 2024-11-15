@@ -3,12 +3,12 @@ import {
   createRentalItem,
   deleteRentalItem,
   getRentalItemsList,
-} from "../../config/adminFunctions";
+} from "../../functions/adminFunctions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getCookie } from '../../config/cookie';
+import { getCookie } from '../../functions/cookie';
 
 export default function RentalLists() {
   const [formActive, setFormActive] = useState(false);

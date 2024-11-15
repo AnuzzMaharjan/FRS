@@ -1,4 +1,4 @@
-import { handleLogin } from "../config/userAuth";
+import { handleLogin } from "../functions/userAuth";
 import { useState } from "react";
 import AdminHeader from "./components/AdminHeader";
 import { useNavigate } from "react-router-dom";
@@ -7,16 +7,17 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     
+    
     const navigate = useNavigate();
 
   async function handleAdminLogin(e) {
     e.preventDefault();
 
-      const response = await handleLogin(email, password);
+    const response = await handleLogin(email, password);
       if (response.success) {
           navigate('dashboard');
         } else {
-          alert(response.message);
+        alert('Email or password invalid!!');
       }
   }
 

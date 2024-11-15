@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getRentalItemsList } from "../config/adminFunctions";
+import { getRentalItemsList } from "../functions/adminFunctions";
 import { Link, Outlet } from "react-router-dom";
 
 export default function Rental() {

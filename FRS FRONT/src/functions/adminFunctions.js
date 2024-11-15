@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getRentalItemsList = async () => {
     try {
-        const response = await axios.get('http://localhost:4000/items');
+        const response = await axios.get(`http://localhost:4000/items`);
 
         if (response.status === 200) {
             return response.data;
@@ -42,7 +42,7 @@ export const createRentalItem = async (itemName, itemRate, itemStock) => {
         stock:itemStock
     }
     try {
-        const response = await axios.post('http://localhost:4000/item/entry', data);
+        const response = await axios.post(`http://localhost:4000/item/entry`, data);
         if (response.status === 200) {
             return response.data;
         } else {
@@ -50,5 +50,13 @@ export const createRentalItem = async (itemName, itemRate, itemStock) => {
         }
     } catch (err) {
         throw new Error("Item Create Error: ", err);
+    }
+}
+
+export const getCateringList = async () => {
+    try {
+        const response = await axios.get('http:')
+    } catch (err) {
+        throw new Error('Error Fetching the List: ', err);
     }
 }

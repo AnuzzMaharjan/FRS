@@ -21,7 +21,7 @@ function PageRoutes() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isProfile = location.pathname.startsWith("/profile");
-  
+
   return (
     <>
       {!isAdminRoute && <Header />}
