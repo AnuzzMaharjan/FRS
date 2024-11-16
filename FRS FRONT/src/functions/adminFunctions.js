@@ -55,7 +55,13 @@ export const createRentalItem = async (itemName, itemRate, itemStock) => {
 
 export const getCateringList = async () => {
     try {
-        const response = await axios.get('http:')
+        const response = await axios.get('http://localhost:4000/cateringpkgs');
+        if (response.status === 200) {
+            return response.data;
+        }
+        else {
+            return "Couldn't get the data!!";
+        }
     } catch (err) {
         throw new Error('Error Fetching the List: ', err);
     }
