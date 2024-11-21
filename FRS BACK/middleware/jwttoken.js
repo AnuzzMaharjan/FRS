@@ -10,7 +10,7 @@ const jwtTokenForRegister = (otp, email) => {
     return token
 }
 
-const verifyToken = (token)=>{
+const verifyToken = (token) => {
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const currentTime = Math.floor(Date.now() / 1000);

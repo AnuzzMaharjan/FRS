@@ -2,10 +2,9 @@ const db = require('../database');
 
 const repeatedCateringList = async (pkgName) => {
     const query = `SELECT * FROM cateringpkglist WHERE pkg_name = ?`;
-    await db.query(query, [pkgName])
+    return await db.query(query, [pkgName])
         .then(([rows]) => {
-            if (rows.length > 0) return true;
-            return false;
+            return rows.length !== 0;
         })
         .catch(err => {
             throw new Error(err);
@@ -43,18 +42,17 @@ const getAllCateringList = async (req, res) => {
     res.status(200).send(mainList);
 }
 
-const createCateringList = (req, res) => {
+const createCateringList = async (req, res) => {
     const pkgName = req.body.pkg_name ? req.body.pkg_name : '';
     if (!pkgName) return res.status(404).send('Package name as pkg_name required!');
-
-    if (repeatedCateringList(pkgName)) return res.status(409).send(`Package with pkg_name " ${pkgName} " already exists!`);
+    if (await repeatedCateringList(pkgName.trim())) return res.status(409).send(`Package with pkg_name " ${pkgName} " already exists!`);
 
     const query = `INSERT INTO cateringpkglist(pkg_name) VALUES (?)`;
-    db.execute(query, [pkgName])
+    await db.execute(query, [pkgName])
         .then(([result]) => {
             if (result.affectedRows > 0) return res.status(200).send('Catering package created successfully!!');
 
-            return res.status(500).send('Couldn\' create a catering package!!');
+            return res.status(500).send('Couldn\'t create a catering package!!');
         })
         .catch(err => {
             return res.status(500).send(err);
@@ -84,7 +82,7 @@ const deleteCateringSubPkg = async (req, res) => {
     try {
         const [result] = await db.execute(query, [subPkgId]);
         if (result.affectedRows > 0) return res.status(200).send(`Deleted subpkg with sublist_id ${subPkgId}`);
-        return res.status(404).send(`Couldnot find the subpg_id ${subPkgId}`);
+        return res.status(404).send(`Couldnot find the subpkg_id ${subPkgId}`);
     } catch (err) {
         res.status(500).send(err)
     }

@@ -10,11 +10,11 @@ export const getRentalItemsList = async () => {
             throw new Error("Item Fetch error: ", response.data);
         }
     } catch (err) {
-        throw new Error("List items error: ",err);
+        throw new Error("List items error: ", err);
     }
 }
 
-export const deleteRentalItem = async (id,token) => {
+export const deleteRentalItem = async (id, token) => {
     try {
         const response = await axios.delete(`http://localhost:4000/item/${id}`, {
             headers: {
@@ -39,7 +39,7 @@ export const createRentalItem = async (itemName, itemRate, itemStock) => {
     const data = {
         itemName,
         itemPrice: itemRate,
-        stock:itemStock
+        stock: itemStock
     }
     try {
         const response = await axios.post(`http://localhost:4000/item/entry`, data);
@@ -64,5 +64,39 @@ export const getCateringList = async () => {
         }
     } catch (err) {
         throw new Error('Error Fetching the List: ', err);
+    }
+}
+
+export const createCateringList = async (token, pkgname) => {
+    try {
+        const response = await axios.post('http://localhost:4000/cateringpkg', {
+            pkg_name: pkgname,
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        if (response.status === 200) return response.data;
+    }
+    catch (error) {
+        return error.response.data;
+    }
+}
+export const deleteCateringPkg = async (id, token) => {
+    try {
+        const response = await axios.delete(`http://localhost:4000/cateringpkg`,  {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            data:{id}
+        });
+        console.log(response);
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error("Item Delete error: ", response.data);
+        }
+    } catch (err) {
+        throw new Error("List item delete Error: ", err);
     }
 }
