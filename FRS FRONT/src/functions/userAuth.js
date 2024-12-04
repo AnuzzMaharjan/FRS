@@ -44,7 +44,7 @@ export const getUserData=async()=> {
     const auth_token = getCookie("auth_token");
     const userId = getCookie("userId");
     try {
-      const response = await axios.get(`${process.env.apiUri}/user/${userId}`, {
+      const response = await axios.get(`http://localhost:4000/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${auth_token}`,
         },

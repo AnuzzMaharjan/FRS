@@ -94,7 +94,7 @@ const deleteItemEntry = async (req, res) => {
 
 const updateItem = async(req,res) => {
     const updateParams = req.body;
-    console.log(updateParams);
+    console.log(updateParams); 
 }
 
 module.exports = {

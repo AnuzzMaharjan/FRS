@@ -1,35 +1,36 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
-import { getRentalItemsList } from "../functions/adminFunctions";
+import { useEffect,useState } from "react";
 
 export default function Test() {
-    const [items, setItems] = useState();
-    
-    async function getList() {
-        const result = await getRentalItemsList();
-        
-        const mappedData = result.map((value, index) => {
-            return (<tr key={index}>
-                <td>{value.itemName}</td>
-                <td>{value.itemPrice}</td>
-                <td>{value.stock}</td>
-            </tr>
-            )
-        });
+    const [person, setPerson] = useState({
+        firstName: 'Anuj',
+        lastName: 'Maharjan',
+        jobDescription: {
+            position: 'frontend',
+            experience: '3 months'
+        }
+    });
 
-        setItems(mappedData);
+    const handleChange = (e) => {
+        let jobObj = {
+            ...person.jobDescription,
+            [e.target.name] : e.target.value
+        }
+        setPerson({
+            ...person,
+            [e.target.name]: e.target.value,
+            jobDescription: jobObj
+        })
     }
-
 
     return (
         <>
-            <button onClick={getList}>click</button>
-            <table>
-                <tbody>
-                { items}
-                </tbody>
-            </table>
+            <input type="text" name="firstName" value={person.firstName} onChange={handleChange} />
+            <input type="text" name="lastName" value={person.lastName} onChange={handleChange} />
+            <input type="text" name="position" value={person.jobDescription.position} onChange={handleChange} />
+            <input type="text" name="experience" value={person.jobDescription.experience} onChange={handleChange} />
+            <p>{person.firstName} {person.lastName}</p>
+            <p>{person.jobDescription.position} { person.jobDescription.experience}</p>
         </>
     );
 }

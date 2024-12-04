@@ -6,6 +6,7 @@ const verifyAdmin = require('../middleware/verifyAdmin');
 
 router.route('/items').get(getTotalItems);
 router.route('/item/entry').post(verifyAdmin,createItemEntry);
-router.route('/item/:itemId').delete(verifyAdmin,deleteItemEntry);
+router.route('/item/:itemId').delete(verifyAdmin, deleteItemEntry);
+router.route('/')
 
 module.exports = router;

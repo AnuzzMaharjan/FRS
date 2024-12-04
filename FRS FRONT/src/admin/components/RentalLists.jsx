@@ -8,20 +8,34 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getCookie } from '../../functions/cookie';
+import { getCookie } from "../../functions/cookie";
 
 export default function RentalLists() {
   const [formActive, setFormActive] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalValues, setModalValues] = useState({
+    id: 0,
+    name: 'Item',
+    rate: 0,
+    stock: 0
+  });
   const [items, setItems] = useState();
   const [itemName, setItemName] = useState("");
   const [itemRate, setItemRate] = useState("");
   const [itemStock, setItemStock] = useState("");
+  const [itemId, setItemId] = useState(0);
+
+  useEffect(() => {
+    getList();
+  }, []);
 
   const deleteItem = async (id) => {
-    const result = await deleteRentalItem(id,getCookie('auth_token'));
+    const result = await deleteRentalItem(id, getCookie("auth_token"));
     toast(result.message);
     getList();
   };
+
+  const updateItem = async (id) => {};
 
   const toggleCreateItemForm = () => {
     setFormActive((prev) => !prev);
@@ -33,6 +47,16 @@ export default function RentalLists() {
     const result = await createRentalItem(itemName, itemRate, itemStock);
     toast(result.message);
     setFormActive(false);
+  };
+
+  const togglePopup = (id, name, rate, stock) => {
+    setModalValues({
+      id,
+      name,
+      rate,
+      stock
+    })
+    setModalOpen(!modalOpen);
   };
 
   async function getList() {
@@ -60,7 +84,10 @@ export default function RentalLists() {
             >
               {<DeleteIcon />}
             </button>
-            <button className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs">
+            <button className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs" onClick={(e) => {
+              e.stopPropagation();
+              togglePopup(value.itemId, value.itemName, value.itemPrice, value.stock);
+            }}>
               {<EditIcon />}
             </button>
           </td>
@@ -70,10 +97,6 @@ export default function RentalLists() {
 
     setItems(mappedData);
   }
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   return (
     <>
@@ -142,6 +165,58 @@ export default function RentalLists() {
           </thead>
           <tbody>{items}</tbody>
         </table>
+      </div>
+
+      {/* popup */}
+      <div className={`fixed bg-zinc-500/40 w-full h-full top-0 left-0 z-10 ${modalOpen ? '' : 'hidden'}`} onClick={()=>setModalOpen(false)}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/5 z-20 bg-white py-6 px-8">
+          <form>
+            <fieldset className="border border-black py-4 px-6">
+              <legend>Item Id: {modalValues.id}</legend>
+
+              <div className="m-3">
+                <label htmlFor="name" className="font-bold font-sans text-base">
+                  Item_name :
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={modalValues.name}
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                />
+              </div>
+              <div className="m-3">
+                <label htmlFor="rate" className="font-bold font-sans text-base">
+                  Item_Rate :
+                </label>
+                <input
+                  type="number"
+                  name="rate"
+                  id="rate"
+                  value={modalValues.rate}
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                />
+              </div>
+              <div className="m-3">
+                <label
+                  htmlFor="stock"
+                  className="font-bold font-sans text-base"
+                >
+                  item_Stock :
+                </label>
+                <input
+                  type="number"
+                  name="stock"
+                  id="stock"
+                  value={modalValues.stock}
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                />
+              </div>
+              <input type="submit" value='Save' className="bg-blue-600 text-white px-6 py-2 rounded-md mx-3 text-base font-semibold" />
+            </fieldset>
+          </form>
+        </div>
       </div>
     </>
   );
