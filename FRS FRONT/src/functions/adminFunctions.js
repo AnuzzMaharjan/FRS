@@ -90,7 +90,7 @@ export const deleteCateringPkg = async (id, token) => {
             },
             data:{id}
         });
-        console.log(response);
+
         if (response.status === 200) {
             return response.data;
         } else {
@@ -98,5 +98,26 @@ export const deleteCateringPkg = async (id, token) => {
         }
     } catch (err) {
         throw new Error("List item delete Error: ", err);
+    }
+}
+
+export const updateRentalItem = async (data,token)=>{
+    try {
+        const response = await axios.put(`http://localhost:4000/item/${data.id}`, {
+            name: data.name,
+            rate: data.rate,
+            stock: data.stock
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            console.log(response);
+        }
+    } catch (err) {
+        throw new Error('Error updating: ' + err);
     }
 }

@@ -3,27 +3,23 @@ import {
   createRentalItem,
   deleteRentalItem,
   getRentalItemsList,
+  updateRentalItem,
 } from "../../functions/adminFunctions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getCookie } from "../../functions/cookie";
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function RentalLists() {
   const [formActive, setFormActive] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalValues, setModalValues] = useState({
-    id: 0,
-    name: 'Item',
-    rate: 0,
-    stock: 0
-  });
   const [items, setItems] = useState();
   const [itemName, setItemName] = useState("");
-  const [itemRate, setItemRate] = useState("");
-  const [itemStock, setItemStock] = useState("");
-  const [itemId, setItemId] = useState(0);
+  const [itemRate, setItemRate] = useState(0);
+  const [itemStock, setItemStock] = useState(0);
+  const [itemId, setItemId] = useState(0)
 
   useEffect(() => {
     getList();
@@ -35,27 +31,34 @@ export default function RentalLists() {
     getList();
   };
 
-  const updateItem = async (id) => {};
-
   const toggleCreateItemForm = () => {
     setFormActive((prev) => !prev);
   };
 
-  const handleCreateItemForm = async (e) => {
-    e.preventDefault();
-
+  const handleCreateItemForm = async () => {
     const result = await createRentalItem(itemName, itemRate, itemStock);
     toast(result.message);
     setFormActive(false);
   };
 
+  const handleEditSubmit = async() => {
+    const data = {
+      id: itemId,
+      name: itemName,
+      rate: parseInt(itemRate),
+      stock: parseInt(itemStock)
+    }
+    
+    const result = await updateRentalItem(data, getCookie("auth_token"));
+    toast(result);
+    setModalOpen(false);
+  };
+
   const togglePopup = (id, name, rate, stock) => {
-    setModalValues({
-      id,
-      name,
-      rate,
-      stock
-    })
+    setItemName(name);
+    setItemId(id);
+    setItemRate(rate);
+    setItemStock(stock);
     setModalOpen(!modalOpen);
   };
 
@@ -84,10 +87,18 @@ export default function RentalLists() {
             >
               {<DeleteIcon />}
             </button>
-            <button className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs" onClick={(e) => {
-              e.stopPropagation();
-              togglePopup(value.itemId, value.itemName, value.itemPrice, value.stock);
-            }}>
+            <button
+              className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePopup(
+                  value.itemId,
+                  value.itemName,
+                  value.itemPrice,
+                  value.stock
+                );
+              }}
+            >
               {<EditIcon />}
             </button>
           </td>
@@ -113,7 +124,10 @@ export default function RentalLists() {
           </div>
           <div className="block">
             <form
-              onSubmit={handleCreateItemForm}
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateItemForm();
+              }}
               className={`${formActive ? "block" : "hidden"}`}
             >
               <input
@@ -168,11 +182,22 @@ export default function RentalLists() {
       </div>
 
       {/* popup */}
-      <div className={`fixed bg-zinc-500/40 w-full h-full top-0 left-0 z-10 ${modalOpen ? '' : 'hidden'}`} onClick={()=>setModalOpen(false)}>
+      <div
+        className={`fixed bg-zinc-500/40 w-full h-full top-0 left-0 z-10 ${
+          modalOpen ? "" : "hidden"
+        }`}
+      >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/5 z-20 bg-white py-6 px-8">
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleEditSubmit();
+            }}
+            className="relative"
+          >
+            <button className="absolute -top-4 -right-4" onClick={()=>setModalOpen(false)}><CloseIcon/></button>
             <fieldset className="border border-black py-4 px-6">
-              <legend>Item Id: {modalValues.id}</legend>
+              <legend>Item Id: {itemId}</legend>
 
               <div className="m-3">
                 <label htmlFor="name" className="font-bold font-sans text-base">
@@ -182,8 +207,9 @@ export default function RentalLists() {
                   type="text"
                   name="name"
                   id="name"
-                  value={modalValues.name}
+                  value={itemName}
                   className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  onChange={(e)=>setItemName(e.target.value)}
                 />
               </div>
               <div className="m-3">
@@ -194,8 +220,9 @@ export default function RentalLists() {
                   type="number"
                   name="rate"
                   id="rate"
-                  value={modalValues.rate}
+                  value={itemRate}
                   className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  onChange={(e)=>setItemRate(e.target.value)}
                 />
               </div>
               <div className="m-3">
@@ -209,11 +236,16 @@ export default function RentalLists() {
                   type="number"
                   name="stock"
                   id="stock"
-                  value={modalValues.stock}
+                  value={itemStock}
                   className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  onChange={(e)=>setItemStock(e.target.value)}
                 />
               </div>
-              <input type="submit" value='Save' className="bg-blue-600 text-white px-6 py-2 rounded-md mx-3 text-base font-semibold" />
+              <input
+                type="submit"
+                value="Save"
+                className="bg-blue-600 text-white px-6 py-2 rounded-md mx-3 text-base font-semibold"
+              />
             </fieldset>
           </form>
         </div>

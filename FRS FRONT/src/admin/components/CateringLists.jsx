@@ -8,11 +8,16 @@ import {
   deleteCateringPkg,
   getCateringList,
 } from "../../functions/adminFunctions";
+import CloseIcon from "@mui/icons-material/Close";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function CateringLists() {
   const [cateringPkgs, setCateringPkgs] = useState([]);
   const [formActive, setFormActive] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [pkgName, setPkgName] = useState("");
+
+  const navigate = useNavigate();
 
   const getAllPkgs = async () => {
     const cateringList = await getCateringList();
@@ -33,7 +38,7 @@ export default function CateringLists() {
     const result = await deleteCateringPkg(id, token);
     toast(result);
     getAllPkgs();
-  }
+  };
 
   const mappedPkgs = cateringPkgs.map((value, index) => {
     return (
@@ -45,15 +50,28 @@ export default function CateringLists() {
           {value.pkg_name}
         </td>
         <td className="border-x border-slate-400 px-4 py-[2px] text-center">
-          <button className="bg-orange-600 rounded py-1 px-5 text-white">
+          <button
+            onClick={() => navigate(`${value.pkg_id}`)}
+            className="bg-orange-600 rounded py-1 px-5 text-white"
+          >
             {value.subpkgs.length}
           </button>
         </td>
         <td className="border-x border-slate-400 px-4 py-[2px] text-center">
-          <button className="bg-red-600 text-slate-200 px-3 py-1 rounded text-xs mr-2" onClick={()=>{deletepkg(value.pkg_id)}}>
+          <button
+            className="bg-red-600 text-slate-200 px-3 py-1 rounded text-xs mr-2"
+            onClick={() => {
+              deletepkg(value.pkg_id);
+            }}
+          >
             {<DeleteIcon />}
           </button>
-          <button className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs">
+          <button
+            className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs"
+            onClick={() => {
+              setModalOpen(true);
+            }}
+          >
             {<EditIcon />}
           </button>
         </td>
@@ -72,55 +90,132 @@ export default function CateringLists() {
   return (
     <>
       <ToastContainer />
-      <div className="flex justify-end">
-        <div className="basis-full ">
-          <button
-            className="bg-blue-600 text-slate-200 py-2 px-4 rounded block"
-            onClick={toggleCreateItemForm}
-          >
-            {formActive ? "Close Form" : "Create an Item"}
-          </button>
+      <div className="flex">
+        <div className="basis-1/2">
+          <div className="flex justify-end">
+            <div className="basis-full ">
+              <button
+                className="bg-blue-600 text-slate-200 py-2 px-4 rounded block"
+                onClick={toggleCreateItemForm}
+              >
+                {formActive ? "Close Form" : "Create an Item"}
+              </button>
+            </div>
+            <div className="block">
+              <form
+                className={`${formActive ? "block" : "hidden"} flex`}
+                onSubmit={createPkg}
+              >
+                <input
+                  type="text"
+                  placeholder="Package Name"
+                  className="border border-slate-400 m-1 rounded py-1 px-2 focus:outline outline-slate-600"
+                  value={pkgName}
+                  onChange={(e) => setPkgName(e.target.value)}
+                  required
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white py-1 m-1 px-6 rounded"
+                >
+                  Create
+                </button>
+              </form>
+            </div>
+          </div>
+          <div>
+            <table className="border-separate border-spacing-4">
+              <thead>
+                <tr>
+                  <th className="border-b border-slate-400 text-center py-2 px-4">
+                    Pkg_id
+                  </th>
+                  <th className="border-b border-slate-400 text-center py-2 px-4">
+                    Pkg_name
+                  </th>
+                  <th className="border-b border-slate-400 text-center py-2 px-4">
+                    Subpkgs
+                  </th>
+                </tr>
+              </thead>
+              <tbody>{mappedPkgs}</tbody>
+            </table>
+          </div>
         </div>
-        <div className="block">
+
+        <div className="basis-1/2 bg-zinc-200 py-5 px-7 outline outline-1 outline-zinc-400 -outline-offset-8">
+          <Outlet />
+        </div>
+      </div>
+
+      {/* popup */}
+      {/* <div
+        className={`fixed bg-zinc-500/40 w-full h-full top-0 left-0 z-10 ${
+          modalOpen ? "" : "hidden"
+        }`}
+      >
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/5 z-20 bg-white py-6 px-8">
           <form
-            className={`${formActive ? "block" : "hidden"} flex`}
-            onSubmit={createPkg}
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+            className="relative"
           >
-            <input
-              type="text"
-              placeholder="Package Name"
-              className="border border-slate-400 m-1 rounded py-1 px-2 focus:outline outline-slate-600"
-              value={pkgName}
-              onChange={(e) => setPkgName(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className="bg-blue-600 text-white py-1 m-1 px-6 rounded"
-            >
-              Create
-            </button>
+            <button className="absolute -top-4 -right-4" onClick={()=>setModalOpen(false)}><CloseIcon/></button>
+            <fieldset className="border border-black py-4 px-6">
+              <legend>Item Id: </legend>
+
+              <div className="m-3">
+                <label htmlFor="name" className="font-bold font-sans text-base">
+                  Item_name :
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value=""
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  // onChange={(e)=>}
+                />
+              </div>
+              <div className="m-3">
+                <label htmlFor="rate" className="font-bold font-sans text-base">
+                  Item_Rate :
+                </label>
+                <input
+                  type="number"
+                  name="rate"
+                  id="rate"
+                  value=""
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  // onChange={(e)=>}
+                />
+              </div>
+              <div className="m-3">
+                <label
+                  htmlFor="stock"
+                  className="font-bold font-sans text-base"
+                >
+                  item_Stock :
+                </label>
+                <input
+                  type="number"
+                  name="stock"
+                  id="stock"
+                  value=""
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  // onChange={(e)=>}
+                />
+              </div>
+              <input
+                type="submit"
+                value="Save"
+                className="bg-blue-600 text-white px-6 py-2 rounded-md mx-3 text-base font-semibold"
+              />
+            </fieldset>
           </form>
         </div>
-      </div>
-      <div>
-        <table className="border-separate border-spacing-4">
-          <thead>
-            <tr>
-              <th className="border-b border-slate-400 text-center py-2 px-4">
-                Pkg_id
-              </th>
-              <th className="border-b border-slate-400 text-center py-2 px-4">
-                Pkg_name
-              </th>
-              <th className="border-b border-slate-400 text-center py-2 px-4">
-                Subpkgs
-              </th>
-            </tr>
-          </thead>
-          <tbody>{mappedPkgs}</tbody>
-        </table>
-      </div>
+      </div> */}
     </>
   );
 }

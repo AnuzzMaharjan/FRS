@@ -28,7 +28,7 @@ const getTotalItems = (req, res) => {
         .catch(err => {
             console.log('Error fetching: ', err);
             return res.status(404).send('Error fetching data');
-    })
+        })
 }
 
 const getSingleItem = (req, res) => {
@@ -44,12 +44,12 @@ const getSingleItem = (req, res) => {
             }
         })
         .catch(err => {
-            console.log('Couldn\t fetch the item!',err);
+            console.log('Couldn\t fetch the item!', err);
             res.status(500).send('Fetch error!');
-    })
+        })
 }
 
-const createItemEntry = async (req, res) => { 
+const createItemEntry = async (req, res) => {
     const { itemName, itemPrice, stock } = req.body;
 
     if (await checkItemRepetitionName(itemName)) {
@@ -68,7 +68,7 @@ const createItemEntry = async (req, res) => {
         .catch(err => {
             console.error('Execution failed: ', err);
             return res.status(500).send('Execution failed!');
-    })
+        })
 }
 
 const deleteItemEntry = async (req, res) => {
@@ -86,15 +86,35 @@ const deleteItemEntry = async (req, res) => {
             .catch(err => {
                 console.error('Failed to execute: ', err);
                 return res.status(500).send('Something went wrong!');
-        })
+            })
     } else {
         return res.status(404).json({ message: `Item with id: ${itemId} is not found!` });
     }
 }
 
-const updateItem = async(req,res) => {
-    const updateParams = req.body;
-    console.log(updateParams); 
+const updateItem = async (req, res) => {
+    const updateParams = req.params;
+    const toUpdateData = req.body;
+
+    if (updateParams && toUpdateData) {
+        const query = `UPDATE itemslist SET itemName = ? , itemPrice = ? , stock = ? where itemId = ${updateParams.itemId}`;
+
+        try {
+            await db.execute(query, [toUpdateData.name, toUpdateData.rate, toUpdateData.stock]).then(([result]) => {
+                if (result.affectedRows > 0) {
+                    return res.status(200).send('Updated successfully!');
+                } else {
+                    return res.status(500).send('Update failed!');
+                }
+            })
+
+        } catch (err) {
+            console.log('Failed to execute the query : ', err);
+            return res.status(500).send('Failed to update!');
+        }
+    } else {
+        return res.status(406).send('unexpected Parameters or data recieved!');
+    }
 }
 
 module.exports = {
