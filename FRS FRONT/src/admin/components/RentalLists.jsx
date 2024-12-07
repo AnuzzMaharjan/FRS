@@ -26,9 +26,12 @@ export default function RentalLists() {
   }, []);
 
   const deleteItem = async (id) => {
-    const result = await deleteRentalItem(id, getCookie("auth_token"));
-    toast(result.message);
-    getList();
+    let confirmation = confirm('Do you want to delete this item?');
+    if (confirmation) {
+      const result = await deleteRentalItem(id, getCookie("auth_token"));
+      toast(result.message);
+      getList();
+    }
   };
 
   const toggleCreateItemForm = () => {

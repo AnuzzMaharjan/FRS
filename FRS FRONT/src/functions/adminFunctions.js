@@ -151,3 +151,74 @@ export const updateCateringPkg = async (id, pkgName, token) => {
         throw new Error('Failed Request: ' + error)
     }
 }
+
+export const getSubPkg = async (parentId) => {
+    try {
+        const response = await axios.get(`http://localhost:4000/cateringpkg/${parentId}`);
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Something went wrong while fetching subpkgs!');
+        }
+    } catch (error) {
+        throw new Error('Subpkg fetch failed: ' + error);
+    }
+}
+
+export const createSubPkg = async (parentId, contents, token) => {
+    try {
+        const response = await axios.post(`http://localhost:4000/cateringsubpkg/${parentId}`, {
+            contents
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        );
+        if (response.status === 200) {
+            return response.data.result;
+        } else {
+            throw new Error('Failed to create Sub Package!');
+        }
+    } catch (error) {
+        throw new Error('Create subPkg failed: ' + error);
+    }
+}
+
+export const deleteSubPkg = async (subId, token) => {
+    try {
+        const response = await axios.delete(`http://localhost:4000/cateringsubpkg/${subId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (response.status === 200) {
+            return (response.data);
+        }
+
+    } catch (err) {
+        throw new Error("Error while delete request: " + err);
+    }
+}
+
+export const updateSubPkg = async (subId, pkg_id, sublist,token) => {
+    if (!subId || !pkg_id || !sublist || !token) throw new Error('Missing parameters!');
+    try {
+        const response = await axios.put(`http://localhost:4000/cateringsubpkg/${subId}`, {
+            pkg_id,
+            sublist
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        );
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Couldnt Update the data!');
+        }
+    } catch (error) {
+        throw new Error('Request failed: ' + error);
+    }
+}

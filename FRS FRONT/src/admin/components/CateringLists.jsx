@@ -37,10 +37,13 @@ export default function CateringLists() {
   };
 
   const deletepkg = async (id) => {
-    const token = getCookie("auth_token");
-    const result = await deleteCateringPkg(id, token);
-    toast(result);
-    getAllPkgs();
+    let confirmation = confirm('Do you wish to delete this package and all its sub packages?');
+    if (confirmation) {
+      const token = getCookie("auth_token");
+      const result = await deleteCateringPkg(id, token);
+      toast(result);
+      getAllPkgs();
+    }
   };
 
   const handleEditPkgSubmit = async () => {
@@ -64,6 +67,7 @@ export default function CateringLists() {
         </td>
         <td className="border-x border-slate-400 px-4 py-[2px] text-center">
           <button
+            type="button"
             onClick={() => navigate(`${value.pkg_id}`)}
             className="bg-orange-600 rounded py-1 px-5 text-white"
           >

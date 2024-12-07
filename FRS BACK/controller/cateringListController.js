@@ -113,7 +113,7 @@ const deleteCateringSubPkg = async (req, res) => {
 }
 
 const createCateringSubPkg = async (req, res) => {
-    const parentId = req.params.id;
+    const parentId = req.params.subId;
     const contents = Array.isArray(req.body.contents) ? req.body.contents : '';
 
     if (contents.length === 0) return res.status(404).send('contents are required!');
@@ -149,11 +149,52 @@ const createCateringSubPkg = async (req, res) => {
     }
 }
 
+const getSubpakage = async (req, res) => {
+    let { id } = req.params;
+    
+    if (id) {
+        try {
+            const query = `SELECT * FROM cateringpkg_sublist WHERE pkg_id = ${id}`;
+            await db.query(query)
+                .then(([rows]) => {
+                    return res.status(200).send([rows]);
+                }).catch(err => {
+                    return res.status(500).send('Failed to fetch: ' + err);
+            })
+        } catch (err) {
+            return res.status(500).send('DB failure: ' + err);
+        }
+    }
+}
+
+const updateSubPackage = async (req, res) => {
+    const { subId } = req.params;
+    const { pkg_id, sublist } = req.body;
+    
+    try {
+        const query = `UPDATE cateringpkg_sublist SET pkg_id = ?, sublist = ? WHERE sublist_id = ${subId}`;
+
+        await db.execute(query, [pkg_id, sublist])
+            .then(([result]) => {
+                if (result.affectedRows > 0) return res.status(200).send("Updated successsfully!");
+                else return res.status(500).send("Update failed!");
+            })
+            .catch(err => {
+                return res.status(500).send("Couldn't update: " + err);
+        })
+        
+    } catch (error) {
+        return res.status(500).send('Db failure: ' + error);
+    }
+}
+
 module.exports = {
     getAllCateringList,
     createCateringList,
     deleteCateringList,
     createCateringSubPkg,
     deleteCateringSubPkg,
-    updateCateringList
+    updateCateringList,
+    getSubpakage,
+    updateSubPackage
 }
