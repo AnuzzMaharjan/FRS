@@ -36,8 +36,10 @@ export default function RentalLists() {
   };
 
   const handleCreateItemForm = async () => {
-    const result = await createRentalItem(itemName, itemRate, itemStock);
+
+    const result = await createRentalItem(itemName, itemRate, itemStock,getCookie("auth_token"));
     toast(result.message);
+    getList();
     setFormActive(false);
   };
 
@@ -51,6 +53,7 @@ export default function RentalLists() {
     
     const result = await updateRentalItem(data, getCookie("auth_token"));
     toast(result);
+    getList();
     setModalOpen(false);
   };
 
@@ -195,7 +198,7 @@ export default function RentalLists() {
             }}
             className="relative"
           >
-            <button className="absolute -top-4 -right-4" onClick={()=>setModalOpen(false)}><CloseIcon/></button>
+            <button type="button" className="absolute -top-4 -right-4" onClick={()=>setModalOpen(false)}><CloseIcon/></button>
             <fieldset className="border border-black py-4 px-6">
               <legend>Item Id: {itemId}</legend>
 

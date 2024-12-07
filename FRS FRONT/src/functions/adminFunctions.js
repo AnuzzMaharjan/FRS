@@ -32,7 +32,10 @@ export const deleteRentalItem = async (id, token) => {
     }
 }
 
-export const createRentalItem = async (itemName, itemRate, itemStock) => {
+export const createRentalItem = async (itemName, itemRate, itemStock, token) => {
+    if (!token) {
+        throw new Error("User not valid");
+    }
     if (!itemName || !itemRate || !itemStock) {
         throw new Error("Empty Create item parameters!!");
     }
@@ -42,14 +45,41 @@ export const createRentalItem = async (itemName, itemRate, itemStock) => {
         stock: itemStock
     }
     try {
-        const response = await axios.post(`http://localhost:4000/item/entry`, data);
+        const response = await axios.post(`http://localhost:4000/item/entry`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        console.log(response);
         if (response.status === 200) {
             return response.data;
         } else {
-            throw new Error(response.data.message);
+            return (response.data.message);
         }
     } catch (err) {
         throw new Error("Item Create Error: ", err);
+    }
+}
+
+export const updateRentalItem = async (data, token) => {
+    try {
+        const response = await axios.put(`http://localhost:4000/item/${data.id}`, {
+            name: data.name,
+            rate: data.rate,
+            stock: data.stock
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (response.status === 200) {
+            return response.data;
+        }
+        else {
+            throw new Error(response);
+        }
+    } catch (err) {
+        throw new Error('Error updating: ' + err);
     }
 }
 
@@ -82,13 +112,14 @@ export const createCateringList = async (token, pkgname) => {
         return error.response.data;
     }
 }
+
 export const deleteCateringPkg = async (id, token) => {
     try {
-        const response = await axios.delete(`http://localhost:4000/cateringpkg`,  {
+        const response = await axios.delete(`http://localhost:4000/cateringpkg`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
-            data:{id}
+            data: { id }
         });
 
         if (response.status === 200) {
@@ -101,23 +132,22 @@ export const deleteCateringPkg = async (id, token) => {
     }
 }
 
-export const updateRentalItem = async (data,token)=>{
+export const updateCateringPkg = async (id, pkgName, token) => {
     try {
-        const response = await axios.put(`http://localhost:4000/item/${data.id}`, {
-            name: data.name,
-            rate: data.rate,
-            stock: data.stock
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`
+        const response = await axios.put(`http://localhost:4000/cateringpkg/${id}`, {
+            pkgName
+        },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             }
-        });
+        )
+
         if (response.status === 200) {
             return response.data;
-        } else {
-            console.log(response);
         }
-    } catch (err) {
-        throw new Error('Error updating: ' + err);
+    } catch (error) {
+        throw new Error('Failed Request: ' + error)
     }
 }

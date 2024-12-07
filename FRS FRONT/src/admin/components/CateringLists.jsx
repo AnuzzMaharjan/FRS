@@ -7,6 +7,7 @@ import {
   createCateringList,
   deleteCateringPkg,
   getCateringList,
+  updateCateringPkg,
 } from "../../functions/adminFunctions";
 import CloseIcon from "@mui/icons-material/Close";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ export default function CateringLists() {
   const [formActive, setFormActive] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [pkgName, setPkgName] = useState("");
+  const [pkgId, setPkgId] = useState(0);
 
   const navigate = useNavigate();
 
@@ -23,6 +25,7 @@ export default function CateringLists() {
     const cateringList = await getCateringList();
     setCateringPkgs(cateringList);
   };
+
   const createPkg = async (e) => {
     e.preventDefault();
 
@@ -39,6 +42,16 @@ export default function CateringLists() {
     toast(result);
     getAllPkgs();
   };
+
+  const handleEditPkgSubmit = async () => {
+    const result = await updateCateringPkg(pkgId, pkgName, getCookie("auth_token"));
+
+    toast(result);
+    getAllPkgs();
+    setPkgId(0);
+    setPkgName("");
+    setModalOpen(false);
+  }
 
   const mappedPkgs = cateringPkgs.map((value, index) => {
     return (
@@ -69,6 +82,8 @@ export default function CateringLists() {
           <button
             className="bg-blue-600 text-slate-200 px-3 py-1 rounded text-xs"
             onClick={() => {
+              setPkgName(value.pkg_name);
+              setPkgId(value.pkg_id);
               setModalOpen(true);
             }}
           >
@@ -143,13 +158,13 @@ export default function CateringLists() {
           </div>
         </div>
 
-        <div className="basis-1/2 bg-zinc-200 py-5 px-7 outline outline-1 outline-zinc-400 -outline-offset-8">
+        <div className="basis-1/2">
           <Outlet />
         </div>
       </div>
 
       {/* popup */}
-      {/* <div
+      <div
         className={`fixed bg-zinc-500/40 w-full h-full top-0 left-0 z-10 ${
           modalOpen ? "" : "hidden"
         }`}
@@ -158,12 +173,13 @@ export default function CateringLists() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              handleEditPkgSubmit();
             }}
             className="relative"
           >
-            <button className="absolute -top-4 -right-4" onClick={()=>setModalOpen(false)}><CloseIcon/></button>
+            <button type="button" className="absolute -top-4 -right-4" onClick={()=>setModalOpen(false)}><CloseIcon/></button>
             <fieldset className="border border-black py-4 px-6">
-              <legend>Item Id: </legend>
+              <legend>Item Id: { pkgId }</legend>
 
               <div className="m-3">
                 <label htmlFor="name" className="font-bold font-sans text-base">
@@ -173,38 +189,9 @@ export default function CateringLists() {
                   type="text"
                   name="name"
                   id="name"
-                  value=""
+                  value={pkgName}
                   className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
-                  // onChange={(e)=>}
-                />
-              </div>
-              <div className="m-3">
-                <label htmlFor="rate" className="font-bold font-sans text-base">
-                  Item_Rate :
-                </label>
-                <input
-                  type="number"
-                  name="rate"
-                  id="rate"
-                  value=""
-                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
-                  // onChange={(e)=>}
-                />
-              </div>
-              <div className="m-3">
-                <label
-                  htmlFor="stock"
-                  className="font-bold font-sans text-base"
-                >
-                  item_Stock :
-                </label>
-                <input
-                  type="number"
-                  name="stock"
-                  id="stock"
-                  value=""
-                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
-                  // onChange={(e)=>}
+                  onChange={(e)=>setPkgName(e.target.value)}
                 />
               </div>
               <input
@@ -215,7 +202,7 @@ export default function CateringLists() {
             </fieldset>
           </form>
         </div>
-      </div> */}
+      </div>
     </>
   );
 }

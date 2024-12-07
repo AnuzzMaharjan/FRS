@@ -76,6 +76,30 @@ const deleteCateringList = (req, res) => {
 
 }
 
+const updateCateringList = async(req, res) => {
+    const {id} = req.params;
+    const { pkgName } = req.body; 
+
+    if (await repeatedCateringList(pkgName.trim())) {
+        return res.status(409).send(`Pkg with name ${pkgName} already exists!`);
+    }
+
+    if (id && pkgName) {
+        const query = `UPDATE cateringpkglist SET pkg_name = ? where pkg_id = ${id}`;
+
+        try {
+            await db.execute(query, [pkgName]).then(([result]) => {
+               return result.affectedRows > 0 ? res.status(200).send('Updated successfully!') : res.status(500).send('Failed to update!');
+            })
+        } catch (error) {
+            console.log('Failed to operate: ', error);
+            return res.status(500).send('Db query execution failed!');
+        }
+    } else {
+        return res.status(400).send('Missing required data!');
+    }
+}
+
 const deleteCateringSubPkg = async (req, res) => {
     const subPkgId = req.params.id;
     const query = 'DELETE FROM cateringpkg_sublist WHERE sublist_id = ?';
@@ -130,5 +154,6 @@ module.exports = {
     createCateringList,
     deleteCateringList,
     createCateringSubPkg,
-    deleteCateringSubPkg
+    deleteCateringSubPkg,
+    updateCateringList
 }

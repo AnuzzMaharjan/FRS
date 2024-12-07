@@ -96,6 +96,8 @@ const updateItem = async (req, res) => {
     const updateParams = req.params;
     const toUpdateData = req.body;
 
+    if (await checkItemRepetitionName(toUpdateData.name.trim())) return res.status(409).send(`Item with name ${toUpdateData.name} already exists!`);
+
     if (updateParams && toUpdateData) {
         const query = `UPDATE itemslist SET itemName = ? , itemPrice = ? , stock = ? where itemId = ${updateParams.itemId}`;
 
