@@ -17,6 +17,7 @@ export default function CateringLists() {
   const [formActive, setFormActive] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [pkgName, setPkgName] = useState("");
+  const [imgLink, setImgLink] = useState("");
   const [pkgId, setPkgId] = useState(0);
 
   const navigate = useNavigate();
@@ -30,9 +31,10 @@ export default function CateringLists() {
     e.preventDefault();
 
     const token = getCookie("auth_token");
-    const result = await createCateringList(token, pkgName);
+    const result = await createCateringList(token, pkgName,imgLink);
     toast(result);
     setPkgName("");
+    setImgLink("");
     getAllPkgs();
   };
 
@@ -47,7 +49,7 @@ export default function CateringLists() {
   };
 
   const handleEditPkgSubmit = async () => {
-    const result = await updateCateringPkg(pkgId, pkgName, getCookie("auth_token"));
+    const result = await updateCateringPkg(pkgId, pkgName,imgLink, getCookie("auth_token"));
 
     toast(result);
     getAllPkgs();
@@ -64,6 +66,9 @@ export default function CateringLists() {
         </td>
         <td className="border-x border-slate-400 px-4 py-[2px] text-center">
           {value.pkg_name}
+        </td>
+        <td className="border-x border-slate-400 px-4 py-[2px] text-center max-w-48 overflow-x-auto">
+          {value.img_link}
         </td>
         <td className="border-x border-slate-400 px-4 py-[2px] text-center">
           <button
@@ -110,7 +115,7 @@ export default function CateringLists() {
     <>
       <ToastContainer />
       <div className="flex">
-        <div className="basis-1/2">
+        <div>
           <div className="flex justify-end">
             <div className="basis-full ">
               <button
@@ -131,6 +136,14 @@ export default function CateringLists() {
                   className="border border-slate-400 m-1 rounded py-1 px-2 focus:outline outline-slate-600"
                   value={pkgName}
                   onChange={(e) => setPkgName(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Image link"
+                  className="border border-slate-400 m-1 rounded py-1 px-2 focus:outline outline-slate-600"
+                  value={imgLink}
+                  onChange={(e) => setImgLink(e.target.value)}
                   required
                 />
                 <button
@@ -155,6 +168,9 @@ export default function CateringLists() {
                   <th className="border-b border-slate-400 text-center py-2 px-4">
                     Subpkgs
                   </th>
+                  <th className="border-b border-slate-400 text-center py-2 px-4">
+                    Img_link
+                  </th>
                 </tr>
               </thead>
               <tbody>{mappedPkgs}</tbody>
@@ -162,7 +178,7 @@ export default function CateringLists() {
           </div>
         </div>
 
-        <div className="basis-1/2">
+        <div>
           <Outlet />
         </div>
       </div>
@@ -196,6 +212,19 @@ export default function CateringLists() {
                   value={pkgName}
                   className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
                   onChange={(e)=>setPkgName(e.target.value)}
+                />
+              </div>
+              <div className="m-3">
+                <label htmlFor="name" className="font-bold font-sans text-base">
+                  Img_link :
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={imgLink}
+                  className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                  onChange={(e)=>setImgLink(e.target.value)}
                 />
               </div>
               <input

@@ -15,7 +15,6 @@ export const handleLogin = async (email, password) => {
             },
           }
       );
-      console.log(response);
       if (response.data.success) {
         if (response.data.role === "admin") {
           setCookie('auth_token', response.data.token, 1);

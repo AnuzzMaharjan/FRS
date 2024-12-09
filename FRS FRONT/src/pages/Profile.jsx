@@ -68,7 +68,6 @@ export default function Profile() {
   };
 
   const handleGetOtp = async (emailData) => {
-    console.log(email, "emailstate");
     const response = await getOtp(emailData);
     if (response.data.success) {
       setOtpResponse(response.data);
@@ -76,23 +75,6 @@ export default function Profile() {
       console.log(response.data);
     }
   };
-
-  // const handleVerifyOtp = async (email) => {
-  //   console.log(email, "verify");
-  //   if (otpResponse.success) {
-  //     const response = await createUser(
-  //       email,
-  //       formData.otp,
-  //       otpResponse.token,
-  //       formData.password,
-  //       formData.username
-  //     );
-
-  //     console.log(response);
-  //   } else {
-  //     console.log(otpResponse);
-  //   }
-  // };
 
   useEffect(() => {
     checkLogin();
@@ -181,7 +163,7 @@ export default function Profile() {
                   </div>
                   <div className="px-4 py-2 transition-shadow cursor-pointer hover:shadow-md">
                     <ShoppingCartOutlinedIcon />
-                    <span className="ml-3">Your Orders</span>
+                    <span className="ml-3">Your Bookings</span>
                   </div>
                   <div className="px-4 py-2 transition-shadow cursor-pointer hover:shadow-md">
                     <NotificationsNoneOutlinedIcon />
@@ -191,7 +173,7 @@ export default function Profile() {
                   Forgot password?
                 </button>
                 <button
-                  className="bg-blue-600 py-3 px-10 rounded-md ml-5 mt-auto mb-8 text-white text-xl font-semibold transition hover:scale-105"
+                  className="bg-blue-600 py-3 px-10 rounded-md mt-auto mb-8 text-white text-xl font-semibold transition hover:scale-105"
                   onClick={() => {
                     handleLogout();
                     setIsLoggedIn(false);

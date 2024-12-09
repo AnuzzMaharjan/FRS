@@ -44,11 +44,12 @@ const getAllCateringList = async (req, res) => {
 
 const createCateringList = async (req, res) => {
     const pkgName = req.body.pkg_name ? req.body.pkg_name : '';
+    const img_link = req.body.img_link ? req.body.img_link : '';
     if (!pkgName) return res.status(404).send('Package name as pkg_name required!');
     if (await repeatedCateringList(pkgName.trim())) return res.status(409).send(`Package with pkg_name " ${pkgName} " already exists!`);
 
-    const query = `INSERT INTO cateringpkglist(pkg_name) VALUES (?)`;
-    await db.execute(query, [pkgName])
+    const query = `INSERT INTO cateringpkglist(pkg_name,img_link) VALUES (?,?)`;
+    await db.execute(query, [pkgName,img_link])
         .then(([result]) => {
             if (result.affectedRows > 0) return res.status(200).send('Catering package created successfully!!');
 
@@ -78,17 +79,17 @@ const deleteCateringList = (req, res) => {
 
 const updateCateringList = async(req, res) => {
     const {id} = req.params;
-    const { pkgName } = req.body; 
+    const { pkgName,img_link } = req.body; 
 
-    if (await repeatedCateringList(pkgName.trim())) {
-        return res.status(409).send(`Pkg with name ${pkgName} already exists!`);
-    }
+    // if (await repeatedCateringList(pkgName.trim())) {
+    //     return res.status(409).send(`Pkg with name ${pkgName} already exists!`);
+    // }
 
     if (id && pkgName) {
-        const query = `UPDATE cateringpkglist SET pkg_name = ? where pkg_id = ${id}`;
+        const query = `UPDATE cateringpkglist SET pkg_name = ?,img_link = ? where pkg_id = ${id}`;
 
         try {
-            await db.execute(query, [pkgName]).then(([result]) => {
+            await db.execute(query, [pkgName,img_link]).then(([result]) => {
                return result.affectedRows > 0 ? res.status(200).send('Updated successfully!') : res.status(500).send('Failed to update!');
             })
         } catch (error) {
@@ -101,7 +102,7 @@ const updateCateringList = async(req, res) => {
 }
 
 const deleteCateringSubPkg = async (req, res) => {
-    const subPkgId = req.params.id;
+    const subPkgId = req.params.subId;
     const query = 'DELETE FROM cateringpkg_sublist WHERE sublist_id = ?';
     try {
         const [result] = await db.execute(query, [subPkgId]);

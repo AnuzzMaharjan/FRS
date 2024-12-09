@@ -72,14 +72,14 @@ export const updateRentalItem = async (data, token) => {
                 Authorization: `Bearer ${token}`
             }
         });
-        if (response.status === 200) {
+        if (response.status === 200 ) {
             return response.data;
         }
-        else {
-            throw new Error(response);
-        }
     } catch (err) {
-        throw new Error('Error updating: ' + err);
+        if(err.response.status === 409) return (err.response.data);
+        else {
+            throw new Error('update error: '+err);
+        }
     }
 }
 
@@ -97,10 +97,11 @@ export const getCateringList = async () => {
     }
 }
 
-export const createCateringList = async (token, pkgname) => {
+export const createCateringList = async (token, pkgname,img_link = '') => {
     try {
         const response = await axios.post('http://localhost:4000/cateringpkg', {
             pkg_name: pkgname,
+            img_link
         }, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -132,10 +133,11 @@ export const deleteCateringPkg = async (id, token) => {
     }
 }
 
-export const updateCateringPkg = async (id, pkgName, token) => {
+export const updateCateringPkg = async (id, pkgName,img_link, token) => {
     try {
         const response = await axios.put(`http://localhost:4000/cateringpkg/${id}`, {
-            pkgName
+            pkgName,
+            img_link
         },
             {
                 headers: {
