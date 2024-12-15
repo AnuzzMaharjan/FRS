@@ -224,3 +224,34 @@ export const updateSubPkg = async (subId, pkg_id, sublist,token) => {
         throw new Error('Request failed: ' + error);
     }
 }
+
+export const getUsers = async (token) => {
+    try {
+        const response = await axios.get('http://localhost:4000/users', {
+            headers: {
+                Authorization:`Bearer ${token}`
+            }
+        })
+        if (response.status === 200) {
+            return response.data;
+        }
+    } catch (error) {
+        throw new Error('Failed to get Users:: '+ error);
+    }
+}
+
+export const deleteUser = async (token, id) => {
+    try {
+        const response = await axios.delete(`http://localhost:4000/user/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return response.data.message;
+
+    } catch (error) {
+        return error.response.data.message;
+    }
+
+}

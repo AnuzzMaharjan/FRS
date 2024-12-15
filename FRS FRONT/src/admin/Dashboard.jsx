@@ -59,6 +59,16 @@ export default function Dashboard() {
               </NavLink>
             </li>
             <li className="py-2">
+              <NavLink
+                to="users"
+                className={({ isActive }) =>
+                  isActive ? "text-slate-700 underline underline-offset-4" : ""
+                }
+              >
+                Users
+              </NavLink>
+            </li>
+            <li className="py-2">
               <button onClick={logout}>
                 Log Out <LogoutTwoToneIcon />
               </button>

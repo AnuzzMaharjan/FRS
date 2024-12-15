@@ -24,9 +24,23 @@ const checkEmailRepetition =async (email) => {
             res.status(500).send('Error fetching data');
     }
 }
+const checkBySql = async (query) => {
+    if (!query) {
+        return 0;
+    }
+    await db.query(query).then(([rows]) => {
+        if (rows.length > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }).catch((error)=>{
+        throw new Error('Failed db query processing:: ' + error);
+    })
+}
 
 const getUsers = (req, res) => {
-    const query = "SELECT * FROM UserInfo";
+    const query = "SELECT * FROM UserInfo WHERE role = 'user'";
 
     db.query(query)
         .then(([rows]) => {
@@ -129,6 +143,66 @@ const getUser = (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    const userId = req.params.id;
+    const username = req.body.username ? req.body.username : '';
+    const email = req.body.email ? req.body.email : '';
+
+    if (username && email) {
+        let query = `SELECT * FROM userinfo WHERE userId != ${userId} AND username = '${username}' AND email = '${email}'`;
+        if (await checkBySql(query)) {
+            return res.status(409).send('Username or Email already exists!');
+        }
+
+        let updateQuery = `UPDATE userinfo set username = ?, email = ? WHERE userId = ${userId}`;
+        await db.execute(updateQuery, [username,email]).then(([result]) => {
+            if (result.affectedRows > 0) {
+                return res.status(200).send('Username and email Updated Successfully!');
+            } else {
+                return res.status(404).send('Could\'nt find the user!');
+            }
+        }).catch((error) => {
+            return res.status(500).send('Db query failed:: ' + error);
+        })
+    }else if (username) {
+        let query = `SELECT * FROM userinfo WHERE userId != ${userId} AND username = '${username}'`;
+        if (await checkBySql(query)) {
+            return res.status(409).send('Username already exists!');
+        }
+
+        let updateQuery = `UPDATE userinfo set username = ? WHERE userId = ${userId}`;
+        await db.execute(updateQuery, [username]).then(([result]) => {
+            if (result.affectedRows > 0) {
+                return res.status(200).send('Username Updated Successfully!');
+            } else {
+                return res.status(404).send('Could\'nt find the user!');
+            }
+        }).catch((error) => {
+            return res.status(500).send('Db query failed:: ' + error);
+        })
+
+    } else if (email) {
+        let query = `SELECT * FROM userinfo WHERE userId != ${userId} AND username = '${email}'`;
+        if (await checkBySql(query)) {
+            return res.status(409).send('Email already exists!');
+        }
+
+        let updateQuery = `UPDATE userinfo set email = ? WHERE userId = ${userId}`;
+        await db.execute(updateQuery, [email]).then(([result]) => {
+            if (result.affectedRows > 0) {
+                return res.status(200).send('Email Updated Successfully!');
+            } else {
+                return res.status(404).send('Could\'nt find the user!');
+            }
+        }).catch((error) => {
+            return res.status(500).send('Db query failed:: ' + error);
+        })
+
+    } else if(!username && !email) {
+        return res.status(406).send('Rejected due to missing username and email!');
+    }
+}
+
 const test = (req, res) => {
     res.status(200).json({ message: 'got otp' });
 }
@@ -139,5 +213,6 @@ module.exports = {
     deleteUser,
     userLogin,
     getUser,
+    updateUser,
     test
 };

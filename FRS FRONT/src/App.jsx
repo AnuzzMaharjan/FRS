@@ -16,6 +16,7 @@ import CateringLists from "./admin/components/CateringLists";
 import NotFound from "./pages/NotFound";
 import Footer from "./components/Footer";
 import Subpackage from "./admin/components/Subpackage";
+import UsersList from "./admin/components/UsersList";
 
 
 function PageRoutes() {
@@ -49,6 +50,7 @@ function PageRoutes() {
           <Route path="catering-lists" element={<CateringLists />} >
             <Route path=":pkgId" element={<Subpackage/>} />
           </Route>
+          <Route path="users" element={ <UsersList /> } />
         </Route>
 
         <Route path="*" element={<NotFound />} />
