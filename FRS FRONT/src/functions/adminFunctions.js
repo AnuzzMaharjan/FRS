@@ -255,3 +255,22 @@ export const deleteUser = async (token, id) => {
     }
 
 }
+
+export const updateUser = async (token, id, username, email) => {
+    try {
+        const response = await axios.patch(`http://localhost:4000/user/${id}`, {
+            username,
+            email
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        if (response.status === 200) {
+           return response.data;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

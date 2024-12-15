@@ -3,7 +3,7 @@ import { toast, ToastContainer } from "react-toastify";
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { deleteUser, getUsers } from "../../functions/adminFunctions";
+import { deleteUser, getUsers, updateUser } from "../../functions/adminFunctions";
 import { getCookie } from "../../functions/cookie";
 
 export default function UsersList() {
@@ -25,6 +25,14 @@ export default function UsersList() {
 
         toast(result);
         getAllUsers();
+    }
+
+    const handleUserEdit = async (id) => {
+        const result = await updateUser(getCookie('auth_token'), id, username, email);
+
+        toast(result);
+        getAllUsers();
+        setModalOpen(false);
     }
     
     const getAllUsers = async () => {
@@ -92,7 +100,7 @@ export default function UsersList() {
                 </th>
               </tr>
             </thead>
-            <tbody>{userData}</tbody>
+                {userData && <tbody>{ userData}</tbody>}
           </table>
         </div>
   
@@ -106,7 +114,7 @@ export default function UsersList() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                
+                handleUserEdit(userId);
               }}
               className="relative"
             >
@@ -123,7 +131,7 @@ export default function UsersList() {
                     name="username"
                     id="username"
                     value={username}
-                    className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                    className="border border-black rounded-sm py-1 px-2 font-sans w-72 ml-3 text-base"
                     onChange={(e)=>setUsername(e.target.value)}
                   />
                 </div>
@@ -136,7 +144,7 @@ export default function UsersList() {
                     name="email"
                     id="email"
                     value={email}
-                    className="border border-black rounded-sm py-1 px-2 font-sans ml-3 text-base"
+                    className="border border-black rounded-sm py-1 px-2 font-sans ml-3 w-80 text-base"
                     onChange={(e)=>setEmail(e.target.value)}
                   />
                 </div>
